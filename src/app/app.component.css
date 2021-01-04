@@ -1,0 +1,78 @@
+div.relative1{
+    position: absolute;
+    border: 0px solid;
+    /* top: 30px; */
+
+
+    
+  }
+  div.relative2{
+    position: relative;
+    border: 2px solid;
+    box-shadow: 0 2px 1px -1px rgba(0, -4, 0, 3.3), 0 1px 1px 0 rgba(0, 0, 0, 0.6), 0 1px 3px 0 rgba(0, 0, 0, 0.50) !important;
+    border-color: rgb(248, 237, 200);
+    top: 300px;
+    
+
+  }
+  /* :host ::ng-deep .p-card .p-card-body{
+
+    top: 100px;
+    position: relative;
+    color: #000002 !important;
+    box-shadow: 0 2px 1px -1px rgba(0, -4, 0, 3.3), 0 1px 1px 0 rgba(0, 0, 0, 0.60), 0 1px 3px 0 rgba(0, 0, 0, 0.50) !important;
+    border-radius: 4px !important; 
+
+  } */
+
+ 
+  /* div.relative4{
+    top: 10px;
+    position: relative;
+
+  } */
+/*   
+  .img{
+      width: 1300px;
+  } */
+
+  /* .center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+   */
+  /* .imgicon{
+    top: 50px;
+    width: 250px;
+    height: 200px;
+  } */
+  /* .settingcardinput{
+    opacity: 0.5;
+
+    
+  } */
+
+  /* .settingbuttoninput{
+    justify-content: center;
+    opacity: 0.9;
+    width: 1500px;
+    
+  } */
+
+  /* .settingforminput{
+
+    align-items: center;
+  } */
+
+  /* .ss{
+    justify-content: center;
+  } */
+  /* .form{
+    box-sizing: border-box;
+    justify-content: center;
+    align-items: center;
+    left: 500px;
+  }  */
+  
+

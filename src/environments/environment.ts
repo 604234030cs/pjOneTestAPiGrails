@@ -1,10 +1,21 @@
 // This file can be replaced during build by using the `fileReplacements` array.
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
+  const serviceUrl = "http://localhost:8080/"
 
 export const environment = {
-  production: false
+  production: false,
+
+
+  teacher:{
+    allTeacher: serviceUrl + "api/teachers/",
+    checkTeacherById: serviceUrl + "api/teachers?id="
+  },
+  classroom:{
+    allClass: serviceUrl + "api/classrooms/"
+  }
 };
+
 
 /*
  * For easier debugging in development mode, you can import the following file

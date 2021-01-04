@@ -1,0 +1,16 @@
+div.relative2{
+    top: 20px;
+    position: relative;
+    border: 2px solid;
+    box-shadow: 0 2px 1px -1px rgba(0, -4, 0, 3.3), 0 1px 1px 0 rgba(0, 0, 0, 0.6), 0 1px 3px 0 rgba(0, 0, 0, 0.50) !important;
+    border-color: rgb(248, 237, 200);
+    top: 300px;
+    opacity: 0.8;
+  }
+
+
+/* :host ::ng-deep .p-card .p-card-body{ 
+
+  background-color: rgb(243, 239, 239);
+  
+} */

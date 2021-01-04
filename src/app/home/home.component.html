@@ -1,0 +1,154 @@
+<p-tabMenu [model]="items"[activeItem]="activeItem"></p-tabMenu>
+<p-toast></p-toast>
+<!-- <p-confirmDialog header="ConfirmAddTeacher" icon="pi pi-exclamation-triangle"></p-confirmDialog> -->
+<br>
+<!------------------------------------  Toolbar Show Topic Table Teacher   ------------------------------------>
+<p-toolbar styleClass="p-mb-4">
+    <ng-template pTemplate="left">
+        <h3>ตารางคุณครู</h3>
+        &nbsp;&nbsp;&nbsp;<button pButton pRipple type="button" label=""
+            class="p-button-raised p-button-success p-button-text" icon="pi pi-plus" iconPos="right"
+            (click)="handleAddTeacher()"></button>
+    </ng-template>
+</p-toolbar>
+
+<!------------------------------------  Form Show Table Teacher   ------------------------------------>
+<p-card [style]="{'background-color':' rgb(242, 250, 234)'}">
+    <p-table [value]="allTeacher" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [rowsPerPageOptions]="[10,25,50]">
+        <!-- <p-table [value]="allTeacher" styleClass="p-datatable-gridlines"> -->
+        <ng-template pTemplate="header">
+            <tr>
+                <th>ลำดับคุณครู</th>
+                <th>ชื่อ</th>
+                <th>นามสกุล</th>
+                <th>เบอร์โทร</th>
+                <th>ที่อยู่</th>
+                <th style="text-align:center">สถานะ</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-teacher>
+            <tr>
+                <td>{{teacher.id}}</td>
+                <td>{{teacher.teacherTitle}}{{teacher.teacherName}}</td>
+                <td>{{teacher.teacherSname}}</td>
+                <td>{{teacher.teacherTel}}</td>
+                <td>{{teacher.teacherAddress}}</td>
+                <td style="text-align:center">
+                    <button pButton pRipple type="button" icon="pi pi-pencil" (click)="handleEditTeacher(teacher)"
+                        class="p-button-rounded p-button-text"></button>
+                    <button pButton pRipple type="button" icon="pi pi-trash"
+                        (click)="handleSelectDeleteTeacher(teacher)"
+                        class="p-button-rounded p-button-text  p-button-danger"></button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-card>
+
+<!------------------------------------   Template Form Edit Teacher Dialog  ------------------------------------>
+
+
+<p-dialog [(visible)]="isShowEditTeacherDialog" [style]="{width: '450px'}" header="ข้อมูลคุณครู" [modal]="true"
+    styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <div class="p-grid p-ai-center vertical-container">
+            <div class="p-col">
+                <label for="name">คำนำหน้า</label>
+                <p-dropdown [options]="title" [(ngModel)]="selectTeacher.teacherTitle"
+                    placeholder="{{selectTeacher.teacherTitle}}">
+                </p-dropdown>
+            </div>
+        </div>
+        <div class="p-field">
+            <label for="name">ชื่อผู้ใช้</label>
+            <input type="text" pInputText placeholder="{{selectTeacher.teacherName}}"
+                [(ngModel)]="selectTeacher.teacherName" required autofocus>
+        </div>
+        <div class="p-field">
+            <label for="name">นามสกุล</label>
+            <input type="text" pInputText placeholder="{{selectTeacher.teacherSname}}"
+                [(ngModel)]="selectTeacher.teacherSname" required autofocus>
+        </div>
+        <div class="p-field">
+            <label for="name">เบอร์โทร</label>
+            <input type="text" pInputText placeholder="{{selectTeacher.teacherTel}}"
+                [(ngModel)]="selectTeacher.teacherTel" required autofocus>
+        </div>
+        <div class="p-field">
+            <label for="name">ที่อยู่</label>
+            <input type="text" pInputText placeholder="{{selectTeacher.teacherAddress}}"
+                [(ngModel)]="selectTeacher.teacherAddress" required autofocus>
+        </div>
+    </ng-template>
+
+    <!------------------------------------   Template ButtonStatus Teacher Dialog  ------------------------------------>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text p-button-danger"
+            (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text p-button-success"
+            (click)="handleSaveEditTeacher(selectTeacher)"></button>
+    </ng-template>
+</p-dialog>
+
+<!------------------------------------   Template Form Add Teacher Dialog  ------------------------------------>
+
+<p-dialog [(visible)]="isShowAddTeacherDialog" [style]="{width: '450px'}" header="เพิ่มผู้ปกครอง" [modal]="true"
+    styleClass="p-fluid">
+
+    <ng-template pTemplate="content">
+        <form [formGroup]="teacherForm" (ngSubmit)="handleSaveAddTeacher($event,teacherForm.value)">
+            <div class="p-field">
+                <label for="name">บัญชีผู้ใช้</label>
+                <input type="text" pInputText formControlName="teacherUser" required>
+            </div>
+            <div class="p-field">
+                <label for="name">รหัสผ่าน</label>
+                <input type="password" pInputText formControlName="teacherPassword" required>
+            </div>
+            <div class="p-grid p-ai-center vertical-container">
+                <div class="p-col">
+                    <label for="name">คำนำหน้า</label>
+                    <p-dropdown [options]="title" formControlName="teacherTitle"></p-dropdown>
+                </div>
+            </div>
+            <div class="p-field">
+                <label for="name">ชื่อผู้ใช้</label>
+                <input type="text" pInputText formControlName="teacherName" required>
+            </div>
+            <div class="p-field">
+                <label for="name">นามสกุล</label>
+                <input type="text" pInputText formControlName="teacherSname" required>
+            </div>
+            <div class="p-field">
+                <label for="name">เบอร์โทร</label>
+                <input type="text" pInputText formControlName="teacherTel" required>
+            </div>
+            <div class="p-field">
+                <label for="name">ที่อยู่</label>
+                <input type="text" pInputText formControlName="teacherAddress" required>
+            </div>
+            <div class="p-grid">
+                <div class="p-col-4"></div>
+                <div class="p-col"></div>
+                <div class="p-col"></div>
+                <div class="p-col"><button pButton pRipple label="Cancel" icon="pi pi-times"
+                        class="p-button-text p-button-danger" (click)="hideDialog()"></button> </div>
+
+                <div class="p-col"><button pButton pRipple type="submit" label="Save" icon="pi pi-check"
+                        [disabled]="!teacherForm.valid" class="p-button-text p-button-success"></button>
+                </div>
+                <div class="p-col"></div>
+                <div class="p-col"></div>
+                <div class="p-col"></div>
+                <div class="p-col">
+
+                </div>
+            </div>
+        </form>
+    </ng-template>
+
+
+</p-dialog>
