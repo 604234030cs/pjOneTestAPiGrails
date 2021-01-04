@@ -54,7 +54,7 @@ export class HomeComponent implements OnInit {
 
     this.items = [
       { label: 'teacher', icon: 'pi pi-fw pi-home' },
-      { label: 'classRoom', icon: 'pi pi-fw pi-calendar',routerLink: '/classroom' },
+      { label: 'classRoom', icon: 'pi pi-fw pi-calendar', routerLink: '/classroom' },
       { label: 'historyCheckName', icon: 'pi pi-fw pi-pencil' },
       { label: 'listStudent', icon: 'pi pi-fw pi-file' },
       { label: 'listParent', icon: 'pi pi-fw pi-cog' }
@@ -96,7 +96,7 @@ export class HomeComponent implements OnInit {
       this.totalRecords = data.length;
     });
     this.loading = true;
-    this.loadCustomers(this.allTeacher);
+    // this.loadCustomers(this.allTeacher);
   }
 
   loadCustomers(event: LazyLoadEvent) {
@@ -134,9 +134,9 @@ export class HomeComponent implements OnInit {
       icon: 'pi pi-question',
       accept: () => {
         console.log("accept");
-        this.apiTeacher.upDateTacher(selectTeacher).subscribe((data:any)=>{
+        this.apiTeacher.upDateTacher(selectTeacher).subscribe((data: any) => {
           console.log(data);
-          
+
           this.hideDialog();
         })
 
@@ -172,13 +172,13 @@ export class HomeComponent implements OnInit {
 
   confirmDeleteTeacher(teacher) {
     console.log("confirmDeleteTeacher");
-    console.log("dataReceiveTeacherID:",teacher.id);
-    this.apiTeacher.deleteTeacher(teacher).subscribe((data:any)=>{
+    console.log("dataReceiveTeacherID:", teacher.id);
+    this.apiTeacher.deleteTeacher(teacher).subscribe((data: any) => {
       console.log(data);
       this.LoadDataTeacher();
-      
+
     });
-    
+
 
   }
 
@@ -220,6 +220,7 @@ export class HomeComponent implements OnInit {
   selectConfirmAddTeacher(dataAddTeacher: string) {
     console.log("selectConfirmAddTeacher()");
     console.log("dataAddTeacherInselectConfirmAddTeacher:", dataAddTeacher);
+
     this.confirmationService.confirm({
       message: 'Are You Confirm Add Teacher',
       icon: 'pi pi-question',
@@ -244,11 +245,11 @@ export class HomeComponent implements OnInit {
       console.log(data);
       if (data != null) {
         console.log("สำเร็จ");
-        this.messageService.add({ severity: 'success', summary: 'เสร็จสิ้น', detail: 'ลบข้อมูลชั้นเรียนสำเร็จ', life: 3000 })
+        this.messageService.add({ severity: 'success', summary: 'เสร็จสิ้น', detail: 'เพิ่มข้อมูลคุณครูสำเร็จ', life: 3000 })
         this.hideDialog();
       } else {
         console.log("ไม่สำเร็จ");
-        this.messageService.add({ severity: 'success', summary: 'เสร็จสิ้น', detail: 'ลบข้อมูลชั้นเรียนไม่สำเร็จ', life: 3000 });
+        this.messageService.add({ severity: 'success', summary: 'เสร็จสิ้น', detail: 'เพิ่มข้อมูลคุณครูไม่สำเร็จ', life: 3000 });
       }
     })
     this.LoadDataTeacher();

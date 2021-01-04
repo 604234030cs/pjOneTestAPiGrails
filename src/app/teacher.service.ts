@@ -36,7 +36,6 @@ export class TeacherService {
   }
 
   upDateTacher(teacher) {
-
     console.log("upDateTacherSever()");
     console.log("dataput:", teacher);
     let url = environment.teacher.allTeacher+teacher.id;

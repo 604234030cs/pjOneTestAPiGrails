@@ -28,4 +28,28 @@ export class ClassroomService {
       }
     })]))
   }
+
+  addClassRoom(dataPost){
+    console.log("addTacherSever()");
+    console.log("datapost:", dataPost);
+    let url = environment.classroom.allClass;
+    return this.http.post(url, dataPost);
+  }
+
+  upDateTacher(classRoom) {
+    console.log("upDateTacherSever()");
+    console.log("dataput:", classRoom);
+    let url = environment.classroom.allClass+classRoom.id;
+    return this.http.put(url, classRoom);
+  }
+
+  deleteClassRoom(classRoom){
+    console.log("deleteClassRoom()");
+    console.log("dataReceive:",classRoom);
+    let url = environment.classroom.allClass + classRoom.id
+    return this.http.delete(url)
+    
+
+  }
+
 }

@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { Router } from '@angular/router';
 import { Validators, FormControl, FormGroup, FormBuilder } from '@angular/forms';
+import { ConfirmationService } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 
 
 @Component({
@@ -12,8 +14,10 @@ import { Validators, FormControl, FormGroup, FormBuilder } from '@angular/forms'
 })
 export class ClassroomComponent implements OnInit {
 
-  selectClass;
+  selectClassRoom;
   selectTeacher;
+  dataAddClassRoom;
+  dataJsonAddClassRoom;
   allClassRoom: any = [];
   allTeacher: any = [];
   classRoomForm: FormGroup;
@@ -26,13 +30,13 @@ export class ClassroomComponent implements OnInit {
 
   rows = 10;
 
-  constructor(private apiClass: ClassroomService, private router: Router, private fb: FormBuilder) {
-    this.loadDataClassRoom();
-    this.loadDataTeacher();
+  constructor(private apiClassRoom: ClassroomService, private router: Router, private fb: FormBuilder,private confirmationService: ConfirmationService, private messageService: MessageService) {
+
   }
 
   ngOnInit(): void {
-
+    this.loadDataClassRoom();
+    this.loadDataTeacher();
 
     this.items = [
       { label: 'teacher', icon: 'pi pi-fw pi-home', routerLink: '/home' },
@@ -63,9 +67,11 @@ export class ClassroomComponent implements OnInit {
     return this.allClassRoom ? this.first === 0 : true;
   }
 
+  // -------------------------------------------  Get data  -------------------------------------------------------
+
   loadDataClassRoom() {
     console.log("loadDataClassRoom()");
-    this.apiClass.getAllClassRoom().subscribe((data: any) => {
+    this.apiClassRoom.getAllClassRoom().subscribe((data: any) => {
       this.allClassRoom = data;
       console.log("dataReceiveUrl:", this.allClassRoom);
 
@@ -76,7 +82,7 @@ export class ClassroomComponent implements OnInit {
 
   loadDataTeacher(){
     console.log("loadDataTeacher()");
-    this.apiClass.getAllTeacher().subscribe((data:any)=>{
+    this.apiClassRoom.getAllTeacher().subscribe((data:any)=>{
       this.allTeacher = data;
       console.log("dataReceiveUrl:",this.allTeacher);
       
@@ -89,16 +95,151 @@ export class ClassroomComponent implements OnInit {
     
     this.classRoomForm = this.fb.group({
       'className': new FormControl('', Validators.required),
-      'teacher': new FormControl('', Validators.required),
+      'teacher': new FormControl('', Validators.required)
     });
-    this.selectClass = null;
+    this.selectClassRoom = null;
     this.showDialogAddClassRoom();
     
   }
 
+  //  --------------------------------- Add ClassRoom -----------------------------------------------
+
   showDialogAddClassRoom(){
-    console.log("showDialogAddClassRoom");
+    console.log("showDialogAddClassRoom()");
     this.isShowAddClassRoomDialog = true
   }
+
+  handleSaveAddClassRoom(value: any){
+    console.log("handleSaveAddClassRoom()");
+    console.log("dataReceiveForm",value);
+    this.dataAddClassRoom = value;
+    this.selectConfirmAddClassRoom(this.dataAddClassRoom);
+
+  }
+  selectConfirmAddClassRoom(dataAddClassRoom){
+    console.log("selectConfirmAddClassRoom()");
+    console.log("dataReceive:",dataAddClassRoom);
+    this.confirmationService.confirm({
+      message: 'Are You Confirm Add Teacher',
+      icon: 'pi pi-question',
+      accept: () => {
+        console.log("accept");
+        this.confirmAddClassRoom(dataAddClassRoom);
+
+      },
+      reject: () => {
+        console.log("cencel");
+      }
+    });
+
+  }
+
+  confirmAddClassRoom(dataAddClassRoom){
+    console.log("confirmAddClassRoom()");
+    this.dataJsonAddClassRoom = JSON.stringify(dataAddClassRoom)
+    console.log(this.dataJsonAddClassRoom);
+    
+    this.apiClassRoom.addClassRoom(dataAddClassRoom).subscribe((data: any) => {
+      console.log(data);
+      if (data != null) {
+        console.log("สำเร็จ");
+        this.messageService.add({ severity: 'success', summary: 'เสร็จสิ้น', detail: 'เพิ่มข้อมูลชั้นเรียนสำเร็จ', life: 3000 })
+        this.hideDialog();
+      } else {
+        console.log("ไม่สำเร็จ");
+        this.messageService.add({ severity: 'success', summary: 'เสร็จสิ้น', detail: 'เพิ่มข้อมูลชั้นเรียนไม่สำเร็จ', life: 3000 });
+      }
+    })
+    this.hideDialog();
+    
+
+  }
+
+  
+  // ------------------------------- Delete ClassRoom -------------------------------------------------------------------
+
+    
+  handleSelectDeleteClassRoom(classRoom: any) {
+    console.log("handleSelectDeleteClassRoom()");
+    console.log(classRoom.id);
+    this.confirmationService.confirm({
+      message: 'Are You Confirm Delete ClassRoom',
+      icon: 'pi pi-question',
+      accept: () => {
+        console.log("accept");
+        this.confirmDeleteClassRoom(classRoom);
+
+      },
+      reject: () => {
+        console.log("cencel");
+      }
+    });
+
+  }
+
+  confirmDeleteClassRoom(classRoom) {
+    console.log("confirmDeleteclassRoom");
+    console.log("dataReceiveclassRoomID:", classRoom.id);
+    this.apiClassRoom.deleteClassRoom(classRoom).subscribe((data: any) => {
+      console.log(data);
+      this.hideDialog();
+
+    });
+
+
+  }
+
+  // ------------------------------- Edit ClassRoom -------------------------------------------------------------------
+
+  
+  handleEditClassRoom(ClassRoom: any) {
+    console.log("handleEditClassRoom()");
+    console.log("dataClassRoom", ClassRoom);
+    this.selectClassRoom = ClassRoom;
+    console.log("dataselectClassRoom", this.selectClassRoom);
+    this.showDialogEditClassRoom();
+  }
+  showDialogEditClassRoom() {
+    console.log("showDialogEditClassRoom()");
+    this.isShowEditClassRoomDialog = true
+  }
+
+  handleSaveEditClassRoom(selectClassRoom: any) {
+    console.log("handleSaveEditClassRoom()");
+    console.log("dataselectClassRoom", selectClassRoom);
+    this.confirmationService.confirm({
+      message: 'Are You Confirm Edit ClassRoom',
+      icon: 'pi pi-question',
+      accept: () => {
+        console.log("accept");
+        this.apiClassRoom.upDateTacher(selectClassRoom).subscribe((data: any) => {
+          console.log(data);
+          if (data != null) {
+            console.log("สำเร็จ");
+            this.messageService.add({ severity: 'success', summary: 'เสร็จสิ้น', detail: 'เพิ่มข้อมูลชั้นเรียนสำเร็จ', life: 3000 })
+            this.hideDialog();
+          } else {
+            console.log("ไม่สำเร็จ");
+            this.messageService.add({ severity: 'success', summary: 'เสร็จสิ้น', detail: 'เพิ่มข้อมูลชั้นเรียนไม่สำเร็จ', life: 3000 });
+          }
+          this.hideDialog();
+        })
+
+      },
+      reject: () => {
+        console.log("cencel");
+      }
+    });
+
+
+
+  }
+  // ------------------------------- close Dialog -------------------------------------------------------------------
+  hideDialog(){
+    this.isShowAddClassRoomDialog = false
+    this.isShowEditClassRoomDialog = false
+    this.ngOnInit();
+  }
+
 
 }

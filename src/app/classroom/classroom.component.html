@@ -1,5 +1,7 @@
 <p-tabMenu [model]="items" [activeItem]="activeItem"></p-tabMenu>
 <br>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+<p-toast></p-toast>
 <!------------------------------------  Toolbar Show Topic Table Teacher   ------------------------------------>
 <p-toolbar styleClass="p-mb-4">
     <ng-template pTemplate="left">
@@ -11,12 +13,11 @@
 </p-toolbar>
 
 <!------------------------------------  Form Show Table ClassRoom   ------------------------------------>
+
 <p-card [style]="{'background-color':' rgb(242, 250, 234)'}">
     <p-table [value]="allClassRoom" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
         [rowsPerPageOptions]="[10,25,50]">
-
-        <!-- <p-table [value]="allTeacher" styleClass="p-datatable-gridlines"> -->
         <ng-template pTemplate="header">
             <tr>
                 <th>ลำดับชั้นเรียน</th>
@@ -30,10 +31,10 @@
                 <td>{{classRoom.id}}</td>
                 <td>{{classRoom.className}}</td>
                 <td style="text-align:center">
-                    <button pButton pRipple type="button" icon="pi pi-pencil" (click)="handleEditTeacher(teacher)"
+                    <button pButton pRipple type="button" icon="pi pi-pencil" (click)="handleEditClassRoom(classRoom)"
                         class="p-button-rounded p-button-text"></button>
                     <button pButton pRipple type="button" icon="pi pi-trash"
-                        (click)="handleSelectDeleteTeacher(teacher)"
+                        (click)="handleSelectDeleteClassRoom(classRoom)"
                         class="p-button-rounded p-button-text  p-button-danger"></button>
                 </td>
             </tr>
@@ -41,11 +42,14 @@
 
     </p-table>
 </p-card>
+
+<!-------------------------------------------------------- Templet Form Add ClassRoom -------------------------------------------------------->
+
 <p-dialog [(visible)]="isShowAddClassRoomDialog" [style]="{width: '450px'}" header="เพิ่มชั้นเรียน" [modal]="true"
     styleClass="p-fluid">
 
     <ng-template pTemplate="content">
-        <form [formGroup]="classRoomForm" (ngSubmit)="handleSaveAddTeacher($event,teacherForm.value)">
+        <form [formGroup]="classRoomForm" (ngSubmit)="handleSaveAddClassRoom(classRoomForm.value)">
             <div class="p-field">
                 <label for="name">ชื่อชั้นเรียน</label>
                 <input type="text" pInputText formControlName="className" required>
@@ -77,5 +81,35 @@
         </form>
     </ng-template>
 
-
 </p-dialog>
+
+<!-------------------------------------------------------- Templet Form Edit ClassRoom -------------------------------------------------------->
+
+<p-dialog [(visible)]="isShowEditClassRoomDialog" [style]="{width: '450px'}" header="ข้อมูลชั้นเรียน" [modal]="true"
+    styleClass="p-fluid">
+    <ng-template pTemplate="content">
+
+        <div class="p-field">
+            <label for="name">ชื่อชั้นเรียน</label>
+            <input type="text" pInputText placeholder="{{selectClassRoom.className}}"
+                [(ngModel)]="selectClassRoom.className" required autofocus>
+        </div>
+        <div class="p-grid p-ai-center vertical-container">
+            <div class="p-col">
+                <label for="name">คำนำหน้า</label>
+                <p-dropdown [options]="allTeacher" [(ngModel)]="selectClassRoom.teacher.id"
+                    placeholder="{{selectClassRoom.teacher}}">
+                </p-dropdown>
+            </div>
+        </div>
+
+    </ng-template>
+<!------------------------------------   Template ButtonStatus Teacher Dialog  ------------------------------------>
+
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text p-button-danger"
+                (click)="hideDialog()"></button>
+            <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text p-button-success"
+                (click)="handleSaveEditClassRoom(selectClassRoom)"></button>
+        </ng-template>
+    </p-dialog>
