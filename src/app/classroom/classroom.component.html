@@ -1,1 +1,81 @@
-<p-tabMenu [model]="items"[activeItem]="activeItem"></p-tabMenu>
+<p-tabMenu [model]="items" [activeItem]="activeItem"></p-tabMenu>
+<br>
+<!------------------------------------  Toolbar Show Topic Table Teacher   ------------------------------------>
+<p-toolbar styleClass="p-mb-4">
+    <ng-template pTemplate="left">
+        <h3>ตารางชั้นเรียน</h3>
+        &nbsp;&nbsp;&nbsp;<button pButton pRipple type="button" label=""
+            class="p-button-raised p-button-success p-button-text" icon="pi pi-plus" iconPos="right"
+            (click)="handleAddClassRoom()"></button>
+    </ng-template>
+</p-toolbar>
+
+<!------------------------------------  Form Show Table ClassRoom   ------------------------------------>
+<p-card [style]="{'background-color':' rgb(242, 250, 234)'}">
+    <p-table [value]="allClassRoom" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [rowsPerPageOptions]="[10,25,50]">
+
+        <!-- <p-table [value]="allTeacher" styleClass="p-datatable-gridlines"> -->
+        <ng-template pTemplate="header">
+            <tr>
+                <th>ลำดับชั้นเรียน</th>
+                <th>ชื่อชั้นเรียน</th>
+
+                <th style="text-align:center">สถานะ</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-classRoom>
+            <tr>
+                <td>{{classRoom.id}}</td>
+                <td>{{classRoom.className}}</td>
+                <td style="text-align:center">
+                    <button pButton pRipple type="button" icon="pi pi-pencil" (click)="handleEditTeacher(teacher)"
+                        class="p-button-rounded p-button-text"></button>
+                    <button pButton pRipple type="button" icon="pi pi-trash"
+                        (click)="handleSelectDeleteTeacher(teacher)"
+                        class="p-button-rounded p-button-text  p-button-danger"></button>
+                </td>
+            </tr>
+        </ng-template>
+
+    </p-table>
+</p-card>
+<p-dialog [(visible)]="isShowAddClassRoomDialog" [style]="{width: '450px'}" header="เพิ่มชั้นเรียน" [modal]="true"
+    styleClass="p-fluid">
+
+    <ng-template pTemplate="content">
+        <form [formGroup]="classRoomForm" (ngSubmit)="handleSaveAddTeacher($event,teacherForm.value)">
+            <div class="p-field">
+                <label for="name">ชื่อชั้นเรียน</label>
+                <input type="text" pInputText formControlName="className" required>
+            </div>
+
+            <div class="p-grid p-ai-center vertical-container">
+                <div class="p-col">
+                    <label for="name">ครูประจำชั้นเรียน</label>
+                    <p-dropdown [options]="allTeacher" formControlName="teacher"></p-dropdown>
+                </div>
+            </div>
+            <div class="p-grid">
+                <div class="p-col-4"></div>
+                <div class="p-col"></div>
+                <div class="p-col"></div>
+                <div class="p-col"><button pButton pRipple label="Cancel" icon="pi pi-times"
+                        class="p-button-text p-button-danger" (click)="hideDialog()"></button> </div>
+
+                <div class="p-col"><button pButton pRipple type="submit" label="Save" icon="pi pi-check"
+                        [disabled]="!classRoomForm.valid" class="p-button-text p-button-success"></button>
+                </div>
+                <div class="p-col"></div>
+                <div class="p-col"></div>
+                <div class="p-col"></div>
+                <div class="p-col">
+
+                </div>
+            </div>
+        </form>
+    </ng-template>
+
+
+</p-dialog>
