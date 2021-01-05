@@ -31,12 +31,16 @@ import { MessageService } from 'primeng/api';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import {ConfirmPopupModule} from 'primeng/confirmpopup';
 import { ClassroomComponent } from './classroom/classroom.component';
+import { StudentComponent } from './student/student.component';
+import { ParentPipe } from './shared/parent.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    ClassroomComponent
+    ClassroomComponent,
+    StudentComponent,
+    ParentPipe
   ],
   imports: [
     BrowserModule,

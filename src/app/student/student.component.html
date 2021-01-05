@@ -1,0 +1,50 @@
+<p-tabMenu [model]="items" [activeItem]="activeItem"></p-tabMenu>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+<p-toast></p-toast>
+<br>
+<!------------------------------------  Toolbar Show Topic Table Student   ------------------------------------>
+<p-toolbar styleClass="p-mb-4">
+    <ng-template pTemplate="left">
+        <h3>ตารางนักเรียน</h3>
+        &nbsp;&nbsp;&nbsp;<button pButton pRipple type="button" label=""
+            class="p-button-raised p-button-success p-button-text" icon="pi pi-plus" iconPos="right"
+            (click)="handleAddStudent()"></button>
+    </ng-template>
+</p-toolbar>
+
+<!------------------------------------  Form Show Table Student   ------------------------------------>
+<p-card [style]="{'background-color':' rgb(242, 250, 234)'}">
+    <p-table [value]="allStudent" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [rowsPerPageOptions]="[10,25,50]">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>ลำดับนักเรียน</th>
+                <th>ชื่อนักเรียน</th>
+                <th>นามสกุล</th>
+                <th>ชื่อเล่น</th>
+                <th>เพศ</th>
+                <th>ชั้นเรียน</th>
+                <th>บัญชีผู้ปกครอง</th>
+                <th style="text-align:center">สถานะ</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-student>
+            <tr>
+                <td>{{student.id}}</td>
+                <td>{{student.studentTitle}}{{student.studentName}}</td>
+                <td>{{student.studentSname}}</td>
+                <td>{{student.studentNickname}}</td>
+                <td>{{student.studentSex}}</td>
+                <td>{{student.classroom.name}}</td>
+                <td>{{student.parent.user}}</td>
+                <td style="text-align:center">
+                    <button pButton pRipple type="button" icon="pi pi-pencil"
+                        class="p-button-rounded p-button-text"></button>
+                    <button pButton pRipple type="button" icon="pi pi-trash"
+                        class="p-button-rounded p-button-text  p-button-danger"></button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-card>

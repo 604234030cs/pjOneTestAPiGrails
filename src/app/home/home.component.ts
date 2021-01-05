@@ -56,7 +56,7 @@ export class HomeComponent implements OnInit {
       { label: 'teacher', icon: 'pi pi-fw pi-home' },
       { label: 'classRoom', icon: 'pi pi-fw pi-calendar', routerLink: '/classroom' },
       { label: 'historyCheckName', icon: 'pi pi-fw pi-pencil' },
-      { label: 'listStudent', icon: 'pi pi-fw pi-file' },
+      { label: 'listStudent', icon: 'pi pi-fw pi-file',routerLink: '/student' },
       { label: 'listParent', icon: 'pi pi-fw pi-cog' }
     ];
     this.activeItem = this.items[0];
