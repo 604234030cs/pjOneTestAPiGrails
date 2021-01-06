@@ -1,3 +1,4 @@
+import { ClassRoomFilterComponent } from './class-room-filter/class-room-filter.component';
 import { StudentComponent } from './student/student.component';
 import { ClassroomComponent } from './classroom/classroom.component';
 import { HomeComponent } from './home/home.component';
@@ -7,6 +8,7 @@ import { Routes, RouterModule } from '@angular/router';
 const routes: Routes = [
   {path: 'home', component: HomeComponent},
   {path: 'student', component: StudentComponent},
+  {path: 'classRoomFilter', component: ClassRoomFilterComponent},
   {path: 'classroom', component: ClassroomComponent}
 ];
 

@@ -14,38 +14,44 @@ import { MessageService } from 'primeng/api';
 })
 export class ClassroomComponent implements OnInit {
 
+
+  selectedclassRoom: any;
   selectClassRoom;
   selectTeacher;
   dataAddClassRoom;
   dataJsonAddClassRoom;
   allClassRoom: any = [];
   allTeacher: any = [];
+  classroom;
   classRoomForm: FormGroup;
   items: MenuItem[];
   activeItem: MenuItem;
+  loading: boolean;
   isShowAddClassRoomDialog: boolean;
   isShowEditClassRoomDialog: boolean;
-
+  dataFilter;
+  dataSettingTime;
   first = 0;
 
   rows = 10;
 
-  constructor(private apiClassRoom: ClassroomService, private router: Router, private fb: FormBuilder,private confirmationService: ConfirmationService, private messageService: MessageService) {
+  constructor(private apiClassRoom: ClassroomService, private router: Router, private fb: FormBuilder, private confirmationService: ConfirmationService, private messageService: MessageService) {
 
   }
 
   ngOnInit(): void {
     this.loadDataClassRoom();
     this.loadDataTeacher();
-
+    this.loading = true;
     this.items = [
       { label: 'teacher', icon: 'pi pi-fw pi-home', routerLink: '/home' },
       { label: 'classRoom', icon: 'pi pi-fw pi-calendar', routerLink: '/classroom' },
       { label: 'historyCheckName', icon: 'pi pi-fw pi-pencil' },
-      { label: 'listStudent', icon: 'pi pi-fw pi-file',routerLink: '/student' },
+      { label: 'listStudent', icon: 'pi pi-fw pi-file', routerLink: '/student' },
       { label: 'listParent', icon: 'pi pi-fw pi-cog' }
     ];
     this.activeItem = this.items[1];
+
   }
   next() {
     this.first = this.first + this.rows;
@@ -74,51 +80,115 @@ export class ClassroomComponent implements OnInit {
     this.apiClassRoom.getAllClassRoom().subscribe((data: any) => {
       this.allClassRoom = data;
       console.log("dataReceiveUrl:", this.allClassRoom);
+      console.log("datalength:", this.allClassRoom.length);
+      this.loadCustomers(this.allClassRoom);
+
+
 
 
     })
 
   }
 
-  loadDataTeacher(){
+  loadDataTeacher() {
     console.log("loadDataTeacher()");
-    this.apiClassRoom.getAllTeacher().subscribe((data:any)=>{
+    this.apiClassRoom.getAllTeacher().subscribe((data: any) => {
       this.allTeacher = data;
-      console.log("dataReceiveUrl:",this.allTeacher);
-      
+      console.log("dataReceiveUrl:", this.allTeacher);
+
     })
-    
+
   }
+
+
+  loadCustomers(event: any) {
+    console.log("dataReceive:", event);
+    setTimeout(() => {
+      if (this.allClassRoom) {
+        this.classroom = this.allClassRoom.slice(event.first, (event.first + event.rows));
+        this.loading = false;
+
+
+      }
+    }, 1000);
+
+  }
+
+  //  --------------------------------------  Search Section  -----------------------------------------------------
+
+
+  checkDataFilter(event:any) {
+    this.loading = false
+    console.log("checkDataFilter()");
+    console.log("dataReceiveFilter:", event);
+    if (event.filters.id) {
+      console.log(event.filters.id.value);
+      let id = event.filters.id.value
+      console.log("dataId", id);
+
+      this.apiClassRoom.loadDataClassRoomFilterId(id).subscribe((data) => {
+        this.classroom = data;
+        console.log("dataReceiveUrlByClassId", this.classroom);
+
+      })
+
+    }
+    else if (event.filters.className) {
+      console.log(event.filters.className.value);
+      let className = event.filters.className.value
+      console.log("dataClassName:", className);
+      this.apiClassRoom.loadDataClassRoomFilterClassName(className).subscribe((data: any) => {
+        this.classroom = data
+      })
+    }
+
+  }
+  
+  onFilter(event: any) {
+    
+
+    var timeout = null;
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+      timeout = setTimeout( () =>{
+      console.log("search");
+      this.checkDataFilter(event);
+        // doSearch(val); //this is your existing function
+      }, 5000);
+
+
+  }
+  //  --------------------------------- Add ClassRoom -----------------------------------------------
+
 
   handleAddClassRoom() {
     console.log("handleAddClassRoom()");
-    
+
     this.classRoomForm = this.fb.group({
       'className': new FormControl('', Validators.required),
       'teacher': new FormControl('', Validators.required)
     });
     this.selectClassRoom = null;
     this.showDialogAddClassRoom();
-    
+
   }
 
-  //  --------------------------------- Add ClassRoom -----------------------------------------------
-
-  showDialogAddClassRoom(){
+  showDialogAddClassRoom() {
     console.log("showDialogAddClassRoom()");
     this.isShowAddClassRoomDialog = true
   }
 
-  handleSaveAddClassRoom(value: any){
+  handleSaveAddClassRoom(value: any) {
     console.log("handleSaveAddClassRoom()");
-    console.log("dataReceiveForm",value);
+    console.log("dataReceiveForm", value);
     this.dataAddClassRoom = value;
     this.selectConfirmAddClassRoom(this.dataAddClassRoom);
 
   }
-  selectConfirmAddClassRoom(dataAddClassRoom){
+  selectConfirmAddClassRoom(dataAddClassRoom) {
     console.log("selectConfirmAddClassRoom()");
-    console.log("dataReceive:",dataAddClassRoom);
+    console.log("dataReceive:", dataAddClassRoom);
     this.confirmationService.confirm({
       message: 'Are You Confirm Add Teacher',
       icon: 'pi pi-question',
@@ -134,11 +204,11 @@ export class ClassroomComponent implements OnInit {
 
   }
 
-  confirmAddClassRoom(dataAddClassRoom){
+  confirmAddClassRoom(dataAddClassRoom) {
     console.log("confirmAddClassRoom()");
     this.dataJsonAddClassRoom = JSON.stringify(dataAddClassRoom)
     console.log(this.dataJsonAddClassRoom);
-    
+
     this.apiClassRoom.addClassRoom(dataAddClassRoom).subscribe((data: any) => {
       console.log(data);
       if (data != null) {
@@ -151,14 +221,14 @@ export class ClassroomComponent implements OnInit {
       }
     })
     this.hideDialog();
-    
+
 
   }
 
-  
+
   // ------------------------------- Delete ClassRoom -------------------------------------------------------------------
 
-    
+
   handleSelectDeleteClassRoom(classRoom: any) {
     console.log("handleSelectDeleteClassRoom()");
     console.log(classRoom.id);
@@ -191,7 +261,7 @@ export class ClassroomComponent implements OnInit {
 
   // ------------------------------- Edit ClassRoom -------------------------------------------------------------------
 
-  
+
   handleEditClassRoom(ClassRoom: any) {
     console.log("handleEditClassRoom()");
     console.log("dataClassRoom", ClassRoom);
@@ -235,7 +305,7 @@ export class ClassroomComponent implements OnInit {
 
   }
   // ------------------------------- close Dialog -------------------------------------------------------------------
-  hideDialog(){
+  hideDialog() {
     this.isShowAddClassRoomDialog = false
     this.isShowEditClassRoomDialog = false
     this.ngOnInit();

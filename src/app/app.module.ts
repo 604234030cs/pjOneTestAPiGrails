@@ -33,6 +33,7 @@ import {ConfirmPopupModule} from 'primeng/confirmpopup';
 import { ClassroomComponent } from './classroom/classroom.component';
 import { StudentComponent } from './student/student.component';
 import { ParentPipe } from './shared/parent.pipe';
+import { ClassRoomFilterComponent } from './class-room-filter/class-room-filter.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { ParentPipe } from './shared/parent.pipe';
     HomeComponent,
     ClassroomComponent,
     StudentComponent,
-    ParentPipe
+    ParentPipe,
+    ClassRoomFilterComponent
   ],
   imports: [
     BrowserModule,

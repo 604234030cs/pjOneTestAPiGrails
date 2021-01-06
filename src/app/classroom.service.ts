@@ -1,7 +1,10 @@
+import { Classroom } from './class-room-filter/classroom';
+
 import { environment } from 'src/environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
+
 
 @Injectable({
   providedIn: 'root'
@@ -51,5 +54,21 @@ export class ClassroomService {
     
 
   }
+
+
+  loadDataClassRoomFilterClassName(value:any){
+    console.log("loadDataClassRoomFilterClassName()");
+    let url = environment.classroom.searchClasstByName+value
+    return this.http.get(url)
+
+  }
+
+  loadDataClassRoomFilterId(value:any){
+    console.log("loadDataClassRoomFilterId()");
+    let url = environment.classroom.allClass+value
+    return this.http.get(url)
+
+  }
+  
 
 }

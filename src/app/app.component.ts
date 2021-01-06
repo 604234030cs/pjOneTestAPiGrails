@@ -35,7 +35,7 @@ import * as _ from "lodash"
 export class AppComponent implements OnInit {
   title = 'pjTestApiGrail';
   currentPath: string = ''
-  hideMenu: any = ['/home','/classroom','/student']
+  hideMenu: any = ['/home','/classroom','/student','/classRoomFilter']
   allTeacher:any=[];
 
   constructor(private router: Router,private apiTeacher: TeacherService) {

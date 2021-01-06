@@ -47,4 +47,9 @@ export class StudentService {
     })]))
   }
 
+
+  getClassRoomMedium(){
+    return this.http.get<any>('')
+  }
+
 }

@@ -1,0 +1,39 @@
+<div class="card">
+    <h5>Session Storage</h5>
+    <p-table #dt1 [value]="classRoom" selectionMode="single" [(selection)]="selectedclassRoom" dataKey="id" styleClass="p-datatable-customers"
+        [rows]="10" [paginator]="true" stateStorage="session" stateKey="statedemo-session">
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="id">ลำดับชั้นเรียน <p-sortIcon field="id"></p-sortIcon></th>
+                <th pSortableColumn="className">ชั้นเรียน <p-sortIcon field="className"></p-sortIcon></th>
+                <!-- <th pSortableColumn="representative.name">Representative <p-sortIcon field="representative.name"></p-sortIcon></th>
+                <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th> -->
+            </tr>
+            <tr>
+                <th>
+                    <input pInputText type="text" (input)="dt1.filter($event.target.value, 'id', 'contains')" [value]="dt1.filters['id']?.value" placeholder="ค้นหาโดยลำดับ" class="p-column-filter">
+                </th>
+                <th>
+                    <input pInputText type="text" (input)="dt1.filter($event.target.value, 'className', 'contains')" [value]="dt1.filters['className']?.value" placeholder="ค้นหาโดยชื่อชั้นเรียน" class="p-column-filter">
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-class>
+            <tr [pSelectableRow]="class">
+                <td>
+                    <span class="p-column-title">ลำดับที่</span>
+                    {{class.id}}
+                </td>
+                <td>
+                    <span class="p-column-title"></span>
+                    <span class="image-text">{{class.className}}</span>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="4">No classs found.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
