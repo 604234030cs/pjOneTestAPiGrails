@@ -12,8 +12,9 @@ export const environment = {
     checkTeacherById: serviceUrl + "api/teachers?id="
   },
   classroom: {
-    allClass: serviceUrl + "api/classrooms/",
+    getClassRoom: serviceUrl + "api/classrooms/",
     searchClasstByName: serviceUrl + "api/classrooms?className=",
+    
   },
   parent: {
     allParent: serviceUrl + "api/parents/",

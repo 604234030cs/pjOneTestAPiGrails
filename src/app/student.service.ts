@@ -33,7 +33,7 @@ export class StudentService {
   }
 
   getClassRoomAll() {
-    let url = environment.classroom.allClass;
+    let url = environment.classroom.getClassRoom;
     console.log(url);
 
     return this.http.get(url).pipe(map((data: any) =>

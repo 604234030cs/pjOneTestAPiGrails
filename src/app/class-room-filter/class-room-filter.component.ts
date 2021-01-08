@@ -19,15 +19,6 @@ export class ClassRoomFilterComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.apiClassRoom.getAllClassRoom().subscribe((data: any) => {
-      this.classRoom = data;
-      console.log("dataReceiveUrl:", this.classRoom);
-
-      console.log();
-      
-
-
-    })
   }
 
 //  -----------------------------------  Test Section  ----------------------------------------------------------
