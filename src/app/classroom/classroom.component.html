@@ -20,7 +20,7 @@
         styleClass="p-datatable-customers" [rows]="10" [paginator]="true" stateStorage="session"
         stateKey="statedemo-session" [showCurrentPageReport]="true"
         [totalRecords]="totalRecords" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-        [rowsPerPageOptions]="[4,10,25,50]" (onFilter)="onFilter($event)" [loading]="loading"  (onLazyLoad)="loadClassRoom($event)" [lazy]="true" >
+        [rowsPerPageOptions]="[4,10,25,50]"  [loading]="loading"  (onLazyLoad)="loadClassRoom($event)" [lazy]="true" >
         <ng-template pTemplate="header">
             <tr>
                 <th pSortableColumn="id">ลำดับชั้นเรียน <p-sortIcon field="id"></p-sortIcon>

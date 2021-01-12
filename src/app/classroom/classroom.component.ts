@@ -34,7 +34,6 @@ export class ClassroomComponent implements OnInit {
   loading: boolean;
   isShowAddClassRoomDialog: boolean;
   isShowEditClassRoomDialog: boolean;
-  dataFilter;
   dataSettingTime;
   cols: any[];
   offset = 0;
@@ -49,7 +48,7 @@ export class ClassroomComponent implements OnInit {
   }
 
   ngOnInit(): void {
-   
+
 
     this.items = [
       { label: 'teacher', icon: 'pi pi-fw pi-home', routerLink: '/home' },
@@ -60,8 +59,8 @@ export class ClassroomComponent implements OnInit {
     ];
     this.activeItem = this.items[1];
 
+
     // this.loading = true;
-    this.loading = false;
     this.primengConfig.ripple = true;
     console.log(this.primengConfig);
 
@@ -75,29 +74,31 @@ export class ClassroomComponent implements OnInit {
 
 
   loadClassRoom(event: LazyLoadEvent) {
+    console.log("loadClassRoom()");
 
-    this.apiClassRoom.selectClassRoom(event).subscribe((data: any) => {
+    this.apiClassRoom.selectClassRoom(event).subscribe((data) => {
       this.allClassRoom = data;
-      console.log("dataReceiveUrl:", this.allClassRoom.data);
-      console.log("datalength:", this.allClassRoom.dataCount);
-      // this.totalRecords = data.length;
+      console.log("data", this.allClassRoom);
 
     });
-    // this.loading = true;
+
+    // this.apiClassRoom.selectClassRoom(event).subscribe((data: any) => {
+    //   this.allClassRoom = data;
+    //   console.log("data",this.allClassRoom);
+
+    //   console.log("dataReceiveClassroomUrl:", this.allClassRoom.data);
+    //   console.log("datalength:", this.allClassRoom.dataCount);
+
+    // });
+
     console.log("dataEvent:", event);
-    console.log("dataAllClassRoom:", this.allClassRoom.data);
-
     setTimeout(() => {
-
+      // this.loading = true;
       if (this.allClassRoom.data) {
-        console.log(event.first);
-        console.log(event.rows);
-        
         this.classRoomValueTable = this.allClassRoom.data
-        console.log("classRoomValueTable:", this.classRoomValueTable);
-        console.log("dataAllClassRoom2:", this.allClassRoom.data);
+        console.log("dataclassRoomValueTable:", this.classRoomValueTable);
         this.totalRecords = this.allClassRoom.dataCount;
-        // this.loading = false;
+        this.loading = false;
 
       }
     }, 2000);
@@ -107,7 +108,7 @@ export class ClassroomComponent implements OnInit {
     console.log("loadDataTeacher()");
     this.apiClassRoom.getAllTeacher().subscribe((data: any) => {
       this.allTeacher = data;
-      console.log("dataReceiveUrl:", this.allTeacher);
+      console.log("dataReceiveAllTeacherUrl:", this.allTeacher);
 
     })
 
@@ -115,47 +116,52 @@ export class ClassroomComponent implements OnInit {
 
   //  --------------------------------------  Search Section  -----------------------------------------------------
   onFilter(event: any) {
-
-
+    console.log("onFilter()");
     var timeout = null;
     if (timeout) {
       clearTimeout(timeout);
     }
     timeout = setTimeout(() => {
-      console.log("search");
       this.checkDataFilter(event);
-      // doSearch(val); //this is your existing function
     }, 2000);
 
 
   }
 
   checkDataFilter(event: any) {
-    this.loading = false
     console.log("checkDataFilter()");
     console.log("dataReceiveFilter:", event);
-    if (event.filters.id) {
-      console.log(event.filters.id.value);
-      let id = event.filters.id.value
-      console.log("dataId", id);
 
-      this.apiClassRoom.loadDataClassRoomFilterId(id).subscribe((data) => {
-        this.classRoomValueTable = data
-        console.log("dataReceiveUrlByClassId", this.classRoomValueTable);
+    var result = event.filters.id ? 'classId=' + event.filters.id.value : 'className=' + event.filters.className.value;
+    console.log(result);
+    this.apiClassRoom.selectClassRoom(result).subscribe((data) => {
+      this.allClassRoom = data;
+    })
 
-      })
 
-    }
-    else if (event.filters.className) {
-      console.log(event.filters.className.value);
-      let className = event.filters.className.value
-      console.log("dataClassName:", className);
-      this.apiClassRoom.loadDataClassRoomFilterClassName(className).subscribe((data: any) => {
-        console.log("dataGetReceiveUrllFilterClassName:", data);
+    // if (event.filters.id) {
+    //   console.log(event.filters.id.value);
+    //   let id = event.filters.id.value
+    //   console.log("dataId", id);
 
-        this.classRoomValueTable = data
-      })
-    }
+    //   this.apiClassRoom.loadDataClassRoomFilterId(id).subscribe((data) => {
+    //     this.allClassRoom = data;
+    //     this.classRoomValueTable = this.allClassRoom.data
+    //     console.log("dataReceiveUrlByClassId", this.classRoomValueTable);
+
+    //   })
+
+    // }
+    // else if (event.filters.className) {
+    //   console.log(event.filters.className.value);
+    //   let className = event.filters.className.value
+    //   console.log("dataClassName:", className);
+    //   this.apiClassRoom.loadDataClassRoomFilterClassName(className).subscribe((data) => {
+    //     this.allClassRoom = data;
+    //     this.classRoomValueTable = this.allClassRoom.data
+    //     console.log("dataReceiveUrlByClassId", this.classRoomValueTable);
+    //   })
+    // }
 
   }
 

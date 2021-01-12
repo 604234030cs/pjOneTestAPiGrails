@@ -2,7 +2,7 @@ import { Classroom } from './class-room-filter/classroom';
 
 import { environment } from 'src/environments/environment';
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 
 
@@ -16,20 +16,43 @@ export class ClassroomService {
 
 
   selectClassRoom(event) {
-    console.log("getAllClassRoom()");
-    console.log("getAllClassRoom()",event);
-    console.log("dataEventFirst", event.first);
-    let SetData = JSON.stringify({
-      offset: event.first,
-      max: event.rows,
-      sortOrder:event.sortOrder,
-      sortField:event.sortField
+    console.log("selectClassRoom()");
+    let dataFilterId = event.filters.id?event.filters.id.value:''
+    let dataFilterclassName = event.filters.className?event.filters.className.value:''
+    console.log(dataFilterId);
+    console.log(dataFilterclassName);
+    
+    let searchParams = new HttpParams();
+    searchParams = searchParams.append('offset', event.first);
+    searchParams = searchParams.append('max', event.rows);
+    searchParams = searchParams.append('sortOrder', event.sortOrder);
+    searchParams = searchParams.append('sortField', event.sortField);
+    searchParams = searchParams.append('classId', dataFilterId);
+    searchParams = searchParams.append('className',dataFilterclassName);
+
+    console.log(searchParams);
+
+    let url = environment.classroom.getClassRoom;
+    return this.http.get<{ [key: string]: any }>(url, {
+      params: searchParams
     })
-    let params = JSON.parse(SetData);
-    console.log(params);
-    let url = environment.classroom.getClassRoom+'?'+'max='+params.max+'&'+'offset='+params.offset+'&'+'sortOrder='+params.sortOrder+'&'+'sortField='+params.sortField;
-    return this.http.get(url);
+
+    // console.log("getAllClassRoom()");
+    // console.log("getAllClassRoom()", event);
+    // let SetData = JSON.stringify({
+    //   offset: event.first,
+    //   max: event.rows,
+    //   sortOrder: event.sortOrder,
+    //   sortField: event.sortField
+    // })
+    // let params = JSON.parse(SetData);
+    // console.log(params);
+    // let url = environment.classroom.getClassRoom + '?' + 'max=' + params.max + '&' + 'offset=' + params.offset + '&' + 'sortOrder=' + params.sortOrder + '&' + 'sortField=' + params.sortField;
+    // return this.http.get(url);
+
+
   }
+
   getAllTeacher() {
     console.log("getAllTeacher()");
 
@@ -77,18 +100,12 @@ export class ClassroomService {
   }
 
   loadDataClassRoomFilterId(value: any) {
-    // let setData = JSON.stringify({
-    //   offset:value,
-    //   max:1
-    // })
-    // let dataPost = JSON.parse(setData);
-    // console.log("dataPostFilterId:",dataPost);
-    
     console.log("loadDataClassRoomFilterId()");
     let url = environment.classroom.getClassRoom + value
     return this.http.get(url)
 
   }
+
 
 
 }
