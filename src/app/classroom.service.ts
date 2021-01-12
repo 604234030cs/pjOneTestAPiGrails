@@ -1,9 +1,8 @@
-import { Classroom } from './class-room-filter/classroom';
-
-import { environment } from 'src/environments/environment';
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
+
 
 
 @Injectable({
@@ -16,46 +15,24 @@ export class ClassroomService {
 
 
   selectClassRoom(event) {
-    console.log("selectClassRoom()");
-    let dataFilterId = event.filters.id?event.filters.id.value:''
-    let dataFilterclassName = event.filters.className?event.filters.className.value:''
-    console.log(dataFilterId);
-    console.log(dataFilterclassName);
-    
+    // โหลดข้อมูลชั้นเรียนตามเงื่อนไขที่ได้รับ
+    let dataFilterId = event.filters.id ? event.filters.id.value : ''
+    let dataFilterclassName = event.filters.className ? event.filters.className.value : ''
     let searchParams = new HttpParams();
     searchParams = searchParams.append('offset', event.first);
     searchParams = searchParams.append('max', event.rows);
     searchParams = searchParams.append('sortOrder', event.sortOrder);
     searchParams = searchParams.append('sortField', event.sortField);
     searchParams = searchParams.append('classId', dataFilterId);
-    searchParams = searchParams.append('className',dataFilterclassName);
-
-    console.log(searchParams);
-
+    searchParams = searchParams.append('className', dataFilterclassName);
     let url = environment.classroom.getClassRoom;
     return this.http.get<{ [key: string]: any }>(url, {
       params: searchParams
     })
-
-    // console.log("getAllClassRoom()");
-    // console.log("getAllClassRoom()", event);
-    // let SetData = JSON.stringify({
-    //   offset: event.first,
-    //   max: event.rows,
-    //   sortOrder: event.sortOrder,
-    //   sortField: event.sortField
-    // })
-    // let params = JSON.parse(SetData);
-    // console.log(params);
-    // let url = environment.classroom.getClassRoom + '?' + 'max=' + params.max + '&' + 'offset=' + params.offset + '&' + 'sortOrder=' + params.sortOrder + '&' + 'sortField=' + params.sortField;
-    // return this.http.get(url);
-
-
   }
 
   getAllTeacher() {
-    console.log("getAllTeacher()");
-
+    // โหลดข้อมูลคุณครูเพื่อใช้ในการเทียบ #ไม่ได้ใช้ #เก็บไว้เผื่อกลับมาดูตัวอย่าง
     let url = environment.teacher.allTeacher;
     return this.http.get(url).pipe(map((data: any) =>
       [{
@@ -69,43 +46,33 @@ export class ClassroomService {
   }
 
   addClassRoom(dataPost) {
-    console.log("addTacherSever()");
-    console.log("datapost:", dataPost);
+    // เพิ่มข้อมูลชั้นเรียน
     let url = environment.classroom.getClassRoom;
     return this.http.post(url, dataPost);
   }
 
-  upDateTacher(classRoom) {
-    console.log("upDateTacherSever()");
-    console.log("dataput:", classRoom);
+  updateClassRoom(classRoom) {
+    // แก้ไขข้อมูลชั้นเรียน
     let url = environment.classroom.getClassRoom + classRoom.id;
     return this.http.put(url, classRoom);
   }
 
   deleteClassRoom(classRoom) {
-    console.log("deleteClassRoom()");
-    console.log("dataReceive:", classRoom);
+    // ลบข้อมูลชั้นเรียน
     let url = environment.classroom.getClassRoom + classRoom.id
     return this.http.delete(url)
-
-
   }
 
-
   loadDataClassRoomFilterClassName(value: any) {
-    console.log("loadDataClassRoomFilterClassName()");
+    // ใช้ในการดึงข้อมูลโดยดึงข้อมูลจากรายชื่อชั้นเรียน #ไม่ได้ใช้  #เก็บไว้เผื่อกลับมาดูตัวอย่าง
     let url = environment.classroom.searchClasstByName + value
     return this.http.get(url)
-
   }
 
   loadDataClassRoomFilterId(value: any) {
-    console.log("loadDataClassRoomFilterId()");
+    // ใช้ในการดึงข้อมูลโดยดึงข้อมูลจากลำดับชั้นเรียน #ไม่ได้ใช้  #เก็บไว้เผื่อกลับมาดูตัวอย่าง
     let url = environment.classroom.getClassRoom + value
     return this.http.get(url)
-
   }
-
-
 
 }

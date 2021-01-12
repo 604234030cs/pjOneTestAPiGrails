@@ -1,14 +1,8 @@
-import { ClassroomService } from './../classroom.service';
-import { Component, OnInit, Pipe } from '@angular/core';
-import { MenuItem, SortEvent } from 'primeng/api';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Validators, FormControl, FormGroup, FormBuilder } from '@angular/forms';
-import { ConfirmationService } from 'primeng/api';
-import { MessageService } from 'primeng/api';
-import { PrimeNGConfig } from 'primeng/api';
-import { LazyLoadEvent } from 'primeng/api';
-import { map } from 'rxjs/operators';
-import { Injectable } from '@angular/core';
+import { ConfirmationService, LazyLoadEvent, MenuItem, MessageService, PrimeNGConfig } from 'primeng/api';
+import { ClassroomService } from './../classroom.service';
 
 @Component({
   selector: 'app-classroom',
@@ -17,106 +11,78 @@ import { Injectable } from '@angular/core';
 })
 export class ClassroomComponent implements OnInit {
 
-  virtualCars: any[];
+  classRoomForm: FormGroup; //ตัวแปรในรูปแบบของฟอร์มในการเป็นตัวจัดการในการเพิ่มข้อมูลชั้นเรียน
 
-  selectedclassRoom: any;
-  selectClassRoom;
-  selectTeacher;
-  dataAddClassRoom;
-  dataJsonAddClassRoom;
-  allClassRoom: any = [];
-  classRoomValueTable: any = [];
-  allTeacher: any = [];
-  classroom;
-  classRoomForm: FormGroup;
-  items: MenuItem[];
-  activeItem: MenuItem;
-  loading: boolean;
-  isShowAddClassRoomDialog: boolean;
-  isShowEditClassRoomDialog: boolean;
-  dataSettingTime;
-  cols: any[];
-  offset = 0;
-  rows = 10;
-  totalRecords: number;
+  allTeacher: any = []; //ตัวแปรเก็บข้อมูลคุณครู ที่ได้รับจากserve 
+  allClassRoom: any = [];  //ตัวแปรเก็บข้อมูลชั้นเรียน ที่ได้รับจากserve
+  classRoomValueTable: any = []; //ตัวแปรเก็บค่าเฉพาะเนื้อหา ที่ดึงข้อมูลมาจาก #proprety->allClassRoom
 
-  rowGroupMetadata: any;
+
+  items: MenuItem[]; //ตัวแปรเก็บค่าตัวเลือก TabMenu
+  activeItem: MenuItem; //ตัวแปรเก็บค่าลำดับของตัวเลือกที่ของ TabMenu
+
+  loading: boolean; // ตัวแปรเก็บค่าในการทำการรีโหลดหน้า
+  isShowAddClassRoomDialog: boolean; //ตัวแปรเก็บค่าในการแสดงหน้าต่างในการโชว์ฟอร์มเพิ่มข้อมูลชั้นเรียน
+  isShowEditClassRoomDialog: boolean; // ตัวแปรเก็บค่าในการแสดงหน้าต่างในการโชว์ฟอร์มแก้ไขข้อมูลชั้นเรียน
+
+  totalRecords: number; //ตัวแปรเก็บค่าจำนวนข้อมูลชั้นเรียนทั้งหมดที่ได้รับจาก server เพื่อทำการ รีโหลดหน้าตามจำนวนที่ได้รับ
+
+  dataEvent; // ตัวแปรเก็บค่าในส่วนของค่าของevent ในการโหลดหน้า
+  selectClassRoom; // ตัวแปรเก็บค่าชั้นเรียนเฉพาะชั้นเรียนที่เลือกเพื่อแก้ไข
+  selectedclassRoom; // ตัวแปรเก็บค่าชั้นเรียนเฉพาะชั้นเรียนที่เลือก
+  dataJsonAddClassRoom; // property หรือ ตัวแปรแปลงชุดข้อมูลให้อยู่ในรูปแบบ JSON.stringfly
+
+
 
   constructor(private apiClassRoom: ClassroomService, private router: Router, private fb: FormBuilder,
     private confirmationService: ConfirmationService, private messageService: MessageService, private primengConfig: PrimeNGConfig) {
 
+    this.loadDataTeacher(); //โหลดข้อมูลคุณครู
   }
 
   ngOnInit(): void {
 
 
     this.items = [
+      // รายการใช้ในหัวข้อของ TabMenu 
       { label: 'teacher', icon: 'pi pi-fw pi-home', routerLink: '/home' },
       { label: 'classRoom', icon: 'pi pi-fw pi-calendar', routerLink: '/classroom' },
       { label: 'historyCheckName', icon: 'pi pi-fw pi-pencil' },
       { label: 'listStudent', icon: 'pi pi-fw pi-file', routerLink: '/student' },
       { label: 'listParent', icon: 'pi pi-fw pi-cog' }
     ];
-    this.activeItem = this.items[1];
+    this.activeItem = this.items[1]; //ระบุค่าลำดับของตัวเลือกที่ของ TabMenu
 
-
-    // this.loading = true;
-    this.primengConfig.ripple = true;
-    console.log(this.primengConfig);
-
-    this.loadDataTeacher();
-
+    this.primengConfig.ripple = true; // อันนี้ไม่รู้ 555555
   }
-
 
   // -------------------------------------------  load Data  -------------------------------------------------------
 
-
-
   loadClassRoom(event: LazyLoadEvent) {
-    console.log("loadClassRoom()");
-
+    // ดึงข้อมูลชั้นเรียนตามเงือนไข
     this.apiClassRoom.selectClassRoom(event).subscribe((data) => {
       this.allClassRoom = data;
-      console.log("data", this.allClassRoom);
-
     });
-
-    // this.apiClassRoom.selectClassRoom(event).subscribe((data: any) => {
-    //   this.allClassRoom = data;
-    //   console.log("data",this.allClassRoom);
-
-    //   console.log("dataReceiveClassroomUrl:", this.allClassRoom.data);
-    //   console.log("datalength:", this.allClassRoom.dataCount);
-
-    // });
-
-    console.log("dataEvent:", event);
     setTimeout(() => {
-      // this.loading = true;
+      // ระยะเวลาในการรีโหลดการดึงข้อมูลเมื่อได้รับการป้อนข้อมูลมา
       if (this.allClassRoom.data) {
-        this.classRoomValueTable = this.allClassRoom.data
-        console.log("dataclassRoomValueTable:", this.classRoomValueTable);
-        this.totalRecords = this.allClassRoom.dataCount;
-        this.loading = false;
-
+        this.classRoomValueTable = this.allClassRoom.data // เก็บค่าเฉพาะเนื้อหา ที่ดึงข้อมูลมาจากserver
+        this.totalRecords = this.allClassRoom.dataCount;  //เก็บค่าเฉพาะจำนวน ที่ดึงข้อมูลมาจาก
       }
     }, 2000);
+    this.dataEvent = event
   }
 
   loadDataTeacher() {
-    console.log("loadDataTeacher()");
+    // ดึงข้อมูลคุณครู
     this.apiClassRoom.getAllTeacher().subscribe((data: any) => {
       this.allTeacher = data;
-      console.log("dataReceiveAllTeacherUrl:", this.allTeacher);
-
     })
-
   }
 
   //  --------------------------------------  Search Section  -----------------------------------------------------
   onFilter(event: any) {
-    console.log("onFilter()");
+    // ค้นหาข้อมูล #ไม่ได้ใช้
     var timeout = null;
     if (timeout) {
       clearTimeout(timeout);
@@ -124,198 +90,130 @@ export class ClassroomComponent implements OnInit {
     timeout = setTimeout(() => {
       this.checkDataFilter(event);
     }, 2000);
-
-
   }
 
   checkDataFilter(event: any) {
-    console.log("checkDataFilter()");
-    console.log("dataReceiveFilter:", event);
-
+    // ค้นหาข้อมูล ตรวจสอบเงือนไข #ไม่ได้ใช้
     var result = event.filters.id ? 'classId=' + event.filters.id.value : 'className=' + event.filters.className.value;
-    console.log(result);
     this.apiClassRoom.selectClassRoom(result).subscribe((data) => {
       this.allClassRoom = data;
     })
-
-
-    // if (event.filters.id) {
-    //   console.log(event.filters.id.value);
-    //   let id = event.filters.id.value
-    //   console.log("dataId", id);
-
-    //   this.apiClassRoom.loadDataClassRoomFilterId(id).subscribe((data) => {
-    //     this.allClassRoom = data;
-    //     this.classRoomValueTable = this.allClassRoom.data
-    //     console.log("dataReceiveUrlByClassId", this.classRoomValueTable);
-
-    //   })
-
-    // }
-    // else if (event.filters.className) {
-    //   console.log(event.filters.className.value);
-    //   let className = event.filters.className.value
-    //   console.log("dataClassName:", className);
-    //   this.apiClassRoom.loadDataClassRoomFilterClassName(className).subscribe((data) => {
-    //     this.allClassRoom = data;
-    //     this.classRoomValueTable = this.allClassRoom.data
-    //     console.log("dataReceiveUrlByClassId", this.classRoomValueTable);
-    //   })
-    // }
-
   }
-
 
   //  --------------------------------- Add ClassRoom -----------------------------------------------
 
-
   handleAddClassRoom() {
-    console.log("handleAddClassRoom()");
-
+    // กำหนดค่าในส่วนของ form เพื่อใช้เป็นตัวแปรในการเพิ่มชั้นเรียน
     this.classRoomForm = this.fb.group({
       'className': new FormControl('', Validators.required),
       'teacher': new FormControl('', Validators.required)
     });
     this.selectClassRoom = null;
     this.showDialogAddClassRoom();
-
   }
 
   showDialogAddClassRoom() {
-    console.log("showDialogAddClassRoom()");
+    // กำหนดตัวแปรที่ใช้เพื่อกำหนดในการเเสดงฟอร์มเพิ่มข้อมูลชั้นเรียน
     this.isShowAddClassRoomDialog = true
   }
 
   handleSaveAddClassRoom(value: any) {
-    console.log("handleSaveAddClassRoom()");
-    console.log("dataReceiveForm", value);
-    this.dataAddClassRoom = value;
-    this.selectConfirmAddClassRoom(this.dataAddClassRoom);
+    // รับค่าจากฟอร์มที่ผู้ใช้กรอกมาเก็บไว้ในตัวแปร
+    this.selectClassRoom = value;
+    this.selectConfirmAddClassRoom(this.selectClassRoom);
 
   }
   selectConfirmAddClassRoom(dataAddClassRoom) {
-    console.log("selectConfirmAddClassRoom()");
-    console.log("dataReceive:", dataAddClassRoom);
+    // ตัวเลือกเพื่อตัดสินใจในการเพิ่มข้อมูลชั้นเรียน
     this.confirmationService.confirm({
-      message: 'Are You Confirm Add Teacher',
+      message: 'Are You Confirm Add Classroom',
       icon: 'pi pi-question',
       accept: () => {
         console.log("accept");
         this.confirmAddClassRoom(dataAddClassRoom);
-
       },
       reject: () => {
         console.log("cencel");
       }
     });
-
   }
 
   confirmAddClassRoom(dataAddClassRoom) {
-    console.log("confirmAddClassRoom()");
+    // ทำการเพิ่มข้อมูลชั้นเรียนไปใน server
     this.dataJsonAddClassRoom = JSON.stringify(dataAddClassRoom)
-    console.log(this.dataJsonAddClassRoom);
-
     this.apiClassRoom.addClassRoom(dataAddClassRoom).subscribe((data: any) => {
-      console.log(data);
-      if (data != null) {
-        console.log("สำเร็จ");
-        this.messageService.add({ severity: 'success', summary: 'เสร็จสิ้น', detail: 'เพิ่มข้อมูลชั้นเรียนสำเร็จ', life: 3000 })
-        this.hideDialog();
-      } else {
-        console.log("ไม่สำเร็จ");
-        this.messageService.add({ severity: 'success', summary: 'เสร็จสิ้น', detail: 'เพิ่มข้อมูลชั้นเรียนไม่สำเร็จ', life: 3000 });
-      }
+      let detail = data ? 'เพิ่มข้อมูลชั้นเรียนสำเร็จ' : 'เพิ่มข้อมูลชั้นเรียนไม่สำเร็จ';
+      this.messageService.add({ severity: 'success', summary: 'เสร็จสิ้น', detail: detail, life: 3000 });
     })
     this.hideDialog();
-
-
   }
-
 
   // ------------------------------- Delete ClassRoom -------------------------------------------------------------------
 
-
   handleSelectDeleteClassRoom(classRoom: any) {
-    console.log("handleSelectDeleteClassRoom()");
-    console.log(classRoom.id);
+    // ตัวเลือกเพื่อตัดสินใจในการลบข้อมูลชั้นเรียน
     this.confirmationService.confirm({
       message: 'Are You Confirm Delete ClassRoom',
       icon: 'pi pi-question',
       accept: () => {
         console.log("accept");
         this.confirmDeleteClassRoom(classRoom);
-
       },
       reject: () => {
         console.log("cencel");
       }
     });
-
   }
 
   confirmDeleteClassRoom(classRoom) {
-    console.log("confirmDeleteclassRoom");
-    console.log("dataReceiveclassRoomID:", classRoom.id);
+    // ทำการลบข้อมูลชั้นเรียนใน server
     this.apiClassRoom.deleteClassRoom(classRoom).subscribe((data: any) => {
-      console.log(data);
+      let detail = data ? 'ลบข้อมูลชั้นเรียนสำเร็จ' : 'ลบข้อมูลชั้นเรียนไม่สำเร็จ';
+      this.messageService.add({ severity: 'success', summary: 'เสร็จสิ้น', detail: detail, life: 3000 });
       this.hideDialog();
-
     });
-
-
   }
 
   // ------------------------------- Edit ClassRoom -------------------------------------------------------------------
 
-
   handleEditClassRoom(ClassRoom: any) {
-    console.log("handleEditClassRoom()");
-    console.log("dataClassRoom", ClassRoom);
+    // รับค่าจากฟอร์มที่ผู้ใช้กรอกมาเก็บไว้ในตัวแปร
     this.selectClassRoom = ClassRoom;
-    console.log("dataselectClassRoom", this.selectClassRoom);
     this.showDialogEditClassRoom();
   }
+
   showDialogEditClassRoom() {
-    console.log("showDialogEditClassRoom()");
+    // กำหนดตัวแปรที่ใช้เพื่อกำหนดในการเเสดงฟอร์มแก้ไขข้อมูลชั้นเรียน
     this.isShowEditClassRoomDialog = true
   }
 
   handleSaveEditClassRoom(selectClassRoom: any) {
-    console.log("handleSaveEditClassRoom()");
-    console.log("dataselectClassRoom", selectClassRoom);
+    // ตัวเลือกเพื่อตัดสินใจในการแก้ไขข้อมูลชั้นเรียน
     this.confirmationService.confirm({
       message: 'Are You Confirm Edit ClassRoom',
       icon: 'pi pi-question',
       accept: () => {
         console.log("accept");
-        this.apiClassRoom.upDateTacher(selectClassRoom).subscribe((data: any) => {
-          console.log(data);
-          if (data != null) {
-            console.log("สำเร็จ");
-            this.messageService.add({ severity: 'success', summary: 'เสร็จสิ้น', detail: 'เพิ่มข้อมูลชั้นเรียนสำเร็จ', life: 3000 })
-            this.hideDialog();
-          } else {
-            console.log("ไม่สำเร็จ");
-            this.messageService.add({ severity: 'success', summary: 'เสร็จสิ้น', detail: 'เพิ่มข้อมูลชั้นเรียนไม่สำเร็จ', life: 3000 });
-          }
+        this.apiClassRoom.updateClassRoom(selectClassRoom).subscribe((data: any) => {
+          let detail = data ? 'แก้ไขข้อมูลชั้นเรียนสำเร็จ' : 'แก้ไขข้อมูลชั้นเรียนไม่สำเร็จ';
+          this.messageService.add({ severity: 'success', summary: 'เสร็จสิ้น', detail: detail, life: 3000 });
           this.hideDialog();
         })
-
       },
       reject: () => {
         console.log("cencel");
       }
     });
-
-
-
   }
+
   // ------------------------------- close Dialog -------------------------------------------------------------------
+
   hideDialog() {
+    // ล้างค่าตัวแปรที่เป็นการกำหนดในการแสดงฟอร์มต่างๆ พร้อมโหลดข้อมูลใหม่
     this.isShowAddClassRoomDialog = false
     this.isShowEditClassRoomDialog = false
-    this.ngOnInit();
+    this.loadClassRoom(this.dataEvent);
+
   }
 
 
